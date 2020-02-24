@@ -1,5 +1,5 @@
 ASSEMBLER6502		= acme
-AS_FLAGS			= -f cbm -DMACHINE_C64=0
+AS_FLAGS			= -f cbm -DMACHINE_C64=0 --cpu w65c02
 
 PROGS				= kob.prg
 

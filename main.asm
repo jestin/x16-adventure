@@ -2,10 +2,126 @@
 !src "macros.asm"
 !src "x16.asm"
 
+!addr def_irq = $0000
+!addr zp_vsync_trig		= $02
+!addr zp_inc			= $03
+
 *=$1000
 	+video_init
 
 	jsr initialize_layers
+	jsr init_irq
+	lda #0
+	sta zp_inc
+
+;============================================================
+; mainloop
+;============================================================
+mainloop:
+   wai
+   jsr check_vsync
+   jmp mainloop  ; loop forever
+
+;============================================================
+; game_tick
+;============================================================
+game_tick:
+
+	; hscroll layer 0
+	lda #$06
+	sta veralo
+	lda #$20
+	sta veramid
+	lda #$0f
+	sta verahi
+	lda zp_inc
+	sta veradat
+
+	; vscroll layer 0
+	lda #$08
+	sta veralo
+	lda #$20
+	sta veramid
+	lda #$0f
+	sta verahi
+	lda zp_inc
+	sta veradat
+
+	inc zp_inc
+
+	rts
+
+;============================================================
+; init_irq
+; Initializes interrupt vector
+;============================================================
+init_irq:
+	lda IRQVec
+	sta def_irq
+	lda IRQVec+1
+	sta def_irq+1
+	lda #<handle_irq
+	sta IRQVec
+	lda #>handle_irq
+	sta IRQVec+1
+	rts
+
+;============================================================
+; handle_irq
+; Handles VERA IRQ
+;============================================================
+handle_irq:
+	; check for VSYNC
+	lda veraisr
+	and #$01
+	beq +
+	sta zp_vsync_trig
+	; clear vera irq flag
+	sta veraisr
+
++	jmp (def_irq)
+
+;============================================================
+; check_vsync
+;============================================================
+check_vsync:
+	lda zp_vsync_trig
+	beq +
+
+	; VSYNC has occurred, handle
+	jsr game_tick
+
+	stz zp_vsync_trig
++	rts
+
+;============================================================
+; initialize_layers
+;============================================================
+initialize_layers:
+	; copy layer 1 registers to layer 0
+	+vset vreg_lay1 | AUTO_INC_1
+	+vset2 vreg_lay2 | AUTO_INC_1
+
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
+	lda veradat2
+	sta veradat
 
 	; initialize layer 2
 	+vset vreg_lay2 | AUTO_INC_1
@@ -45,60 +161,6 @@
 	sta veradat
 	lda #$34
 	sta veradat
-
-	; hscroll layer 0
-	lda #$06
-	sta veralo
-	lda #$20
-	sta veramid
-	lda #$0f
-	sta verahi
-	lda #5
-	sta veradat
-
-	; vscroll layer 0
-	lda #$08
-	sta veralo
-	lda #$20
-	sta veramid
-	lda #$0f
-	sta verahi
-	lda #5
-	sta veradat
-
-	rts
-
-;============================================================
-; initialize_layers
-;============================================================
-initialize_layers:
-	; copy layer 1 registers to layer 0
-	+vset vreg_lay1 | AUTO_INC_1
-	+vset2 vreg_lay2 | AUTO_INC_1
-
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-
-	lda #0
-	sta veractl
 
 	rts
 
