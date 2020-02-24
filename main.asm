@@ -1,17 +1,16 @@
 !src "vera.asm"
 !src "macros.asm"
 !src "x16.asm"
+!src "zp.asm"
 
 !addr def_irq = $0000
-!addr zp_vsync_trig		= $02
-!addr zp_inc			= $04
 
 *=$1000
 	+video_init
 
 	jsr initialize_layers
 	jsr init_irq
-	+LoadW zp_inc,0
+	+LoadW zp_frame_counter,0
 
 ;============================================================
 ; mainloop
@@ -28,27 +27,47 @@ game_tick:
 
 	; hscroll layer 1
 	+vset (vreg_lay1 + 6) | AUTO_INC_1
-	lda zp_inc
+	lda zp_frame_counter_L4
 	sta veradat
-	lda zp_inc+1
+	lda zp_frame_counter_L4+1
 	sta veradat
 
 	; vscroll layer 1
 	+vset (vreg_lay1 + 8) | AUTO_INC_1
-	lda zp_inc
+	lda zp_frame_counter_L2
 	sta veradat
-	lda zp_inc+1
+	lda zp_frame_counter_L2+1
 	sta veradat
 
 	; hscroll layer 2
 	+vset (vreg_lay2 + 6) | AUTO_INC_1
-	lda zp_inc
+	lda zp_frame_counter
 	sta veradat
-	lda zp_inc+1
+	lda zp_frame_counter+1
 	sta veradat
 
-	+IncW zp_inc
+	jsr update_frame_counters
 
+	rts
+
+;============================================================
+; update_frame_counters
+; Keep frame counters up to date
+;============================================================
+update_frame_counters:
+	+IncW zp_frame_counter
+
+	; slower counters
+	+MoveW zp_frame_counter, zp_frame_counter_R2
+	+LsrW zp_frame_counter_R2
+	+MoveW zp_frame_counter_R2, zp_frame_counter_R4
+	+LsrW zp_frame_counter_R4
+
+	; faster counters
+	+MoveW zp_frame_counter, zp_frame_counter_L2
+	+AslW zp_frame_counter_L2
+	+MoveW zp_frame_counter_L2, zp_frame_counter_L4
+	+AslW zp_frame_counter_L4
 	rts
 
 ;============================================================
