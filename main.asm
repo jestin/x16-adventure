@@ -4,15 +4,14 @@
 
 !addr def_irq = $0000
 !addr zp_vsync_trig		= $02
-!addr zp_inc			= $03
+!addr zp_inc			= $04
 
 *=$1000
 	+video_init
 
 	jsr initialize_layers
 	jsr init_irq
-	lda #0
-	sta zp_inc
+	+LoadW zp_inc,0
 
 ;============================================================
 ; mainloop
@@ -27,27 +26,28 @@ mainloop:
 ;============================================================
 game_tick:
 
-	; hscroll layer 0
-	lda #$06
-	sta veralo
-	lda #$20
-	sta veramid
-	lda #$0f
-	sta verahi
+	; hscroll layer 1
+	+vset (vreg_lay1 + 6) | AUTO_INC_1
 	lda zp_inc
 	sta veradat
-
-	; vscroll layer 0
-	lda #$08
-	sta veralo
-	lda #$20
-	sta veramid
-	lda #$0f
-	sta verahi
-	lda zp_inc
+	lda zp_inc+1
 	sta veradat
 
-	inc zp_inc
+	; vscroll layer 1
+	+vset (vreg_lay1 + 8) | AUTO_INC_1
+	lda zp_inc
+	sta veradat
+	lda zp_inc+1
+	sta veradat
+
+	; hscroll layer 2
+	+vset (vreg_lay2 + 6) | AUTO_INC_1
+	lda zp_inc
+	sta veradat
+	lda zp_inc+1
+	sta veradat
+
+	+IncW zp_inc
 
 	rts
 
@@ -165,29 +165,29 @@ initialize_layers:
 	rts
 
 tiles:
+	!byte %11100111
+	!byte %11000011
+	!byte %10100101
+	!byte %00011000
+	!byte %00011000
+	!byte %10100101
+	!byte %11000011
+	!byte %11100111
+
+	!byte %10000001
+	!byte %01111110
+	!byte %01000010
+	!byte %01000010
+	!byte %01000010
+	!byte %01000010
+	!byte %01111110
+	!byte %10000001
+
+	!byte %10011001
+	!byte %01011010
 	!byte %00111100
-	!byte %01111110
-	!byte %01100110
-	!byte %11000011
 	!byte %11111111
 	!byte %11111111
-	!byte %11000011
-	!byte %11000011
-
-	!byte %00000000
-	!byte %01111110
-	!byte %01111110
-	!byte %01111110
-	!byte %01111110
-	!byte %01111110
-	!byte %01111110
-	!byte %00000000
-
-	!byte %00011000
-	!byte %00011000
-	!byte %00011000
-	!byte %11111111
-	!byte %11111111
-	!byte %00011000
-	!byte %00011000
-	!byte %00011000
+	!byte %00111100
+	!byte %01011010
+	!byte %10011001
