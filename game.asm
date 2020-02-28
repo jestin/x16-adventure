@@ -1,14 +1,45 @@
+!src "screens/home.asm"
 
 ;============================================================
 ; game_tick
 ;============================================================
 game_tick:
 
-	jsr check_inputs
+	lda zp_current_screen
+	cmp #$ff					; if the current screen is unset
+	bne +						; load the HOME screen
+	lda #0
+	sta zp_next_screen
+	jsr load_screen
++	jsr check_inputs
 	jsr update_game_state
 	jsr draw_screen
 	jsr update_frame_counters
 
+	rts
+
+
+;============================================================
+; load_screen
+; Loads a new screen
+;============================================================
+load_screen:
+	lda zp_next_screen
+	pha
+	cmp #0
+	beq @HOME
+	cmp #1
+	beq @TEST
+
+	jmp @end
+
+@HOME:
+	jsr HOME_init
+	jmp @end
+@TEST:
+@end:
+	pla
+	sta zp_current_screen
 	rts
 
 ;============================================================
