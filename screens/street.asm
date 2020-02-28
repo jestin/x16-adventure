@@ -1,17 +1,17 @@
-HOME_ID = 0
+STREET_ID = 1
 
 ;============================================================
-; HOME_init
+; STREET_init
 ;============================================================
-HOME_init:
-	jsr HOME_write_tiles
-	jsr HOME_write_maps
+STREET_init:
+	jsr STREET_write_tiles
+	jsr STREET_write_maps
 	rts
 
 ;============================================================
-; HOME_write_tiles
+; STREET_write_tiles
 ;============================================================
-HOME_write_tiles:
+STREET_write_tiles:
 	; write layer 1 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
@@ -33,23 +33,23 @@ HOME_write_tiles:
 	rts
 
 ;============================================================
-; HOME_write_maps
+; STREET_write_maps
 ;============================================================
-HOME_write_maps:
+STREET_write_maps:
 
 	; write layer 1 map data
 	+vset $04000 | AUTO_INC_1
 	lda #0
 	sta veradat
-	lda #$34
+	lda #$32
 	sta veradat
 	lda #1
 	sta veradat
-	lda #$34
+	lda #$32
 	sta veradat
 	lda #2
 	sta veradat
-	lda #$34
+	lda #$32
 	sta veradat
 
 
@@ -57,15 +57,15 @@ HOME_write_maps:
 	+vset $12000 | AUTO_INC_1
 	lda #0
 	sta veradat
-	lda #$34
+	lda #$36
 	sta veradat
 	lda #1
 	sta veradat
-	lda #$34
+	lda #$36
 	sta veradat
 	lda #2
 	sta veradat
-	lda #$34
+	lda #$36
 	sta veradat
 
 	rts

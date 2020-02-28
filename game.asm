@@ -1,4 +1,5 @@
 !src "screens/home.asm"
+!src "screens/street.asm"
 
 ;============================================================
 ; game_tick
@@ -8,9 +9,10 @@ game_tick:
 	lda zp_current_screen
 	cmp #$ff					; if the current screen is unset
 	bne +						; load the HOME screen
-	lda #0
+	lda #HOME_ID
 	sta zp_next_screen
 	jsr load_screen
+
 +	jsr check_inputs
 	jsr update_game_state
 	jsr draw_screen
@@ -26,17 +28,19 @@ game_tick:
 load_screen:
 	lda zp_next_screen
 	pha
-	cmp #0
+	cmp #HOME_ID
 	beq @HOME
-	cmp #1
-	beq @TEST
+	cmp #STREET_ID
+	beq @STREET
 
 	jmp @end
 
 @HOME:
 	jsr HOME_init
 	jmp @end
-@TEST:
+@STREET:
+	jsr STREET_init
+	jmp @end
 @end:
 	pla
 	sta zp_current_screen
