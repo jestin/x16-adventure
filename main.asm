@@ -1,11 +1,13 @@
+*=$1000
+
 !src "vera.asm"
 !src "macros.asm"
 !src "x16.asm"
 !src "zp.asm"
+!src "tiles.inc"
 
 !addr def_irq = $0000
 
-*=$1000
 	+video_init
 
 	jsr initialize_layers
@@ -205,31 +207,3 @@ initialize_layers:
 	sta veradat
 
 	rts
-
-tiles:
-	!byte %11100111
-	!byte %11000011
-	!byte %10100101
-	!byte %00011000
-	!byte %00011000
-	!byte %10100101
-	!byte %11000011
-	!byte %11100111
-
-	!byte %10000001
-	!byte %01111110
-	!byte %01000010
-	!byte %01000010
-	!byte %01000010
-	!byte %01000010
-	!byte %01111110
-	!byte %10000001
-
-	!byte %10011001
-	!byte %01011010
-	!byte %00111100
-	!byte %11111111
-	!byte %11111111
-	!byte %00111100
-	!byte %01011010
-	!byte %10011001
