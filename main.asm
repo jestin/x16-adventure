@@ -14,7 +14,8 @@ start:
 	+video_init
 
 	jsr initialize_layers
-	jsr set_tiles
+	jsr write_tiles
+	jsr write_maps
 	jsr init_irq
 	+LoadW zp_frame_counter,0
 
@@ -108,9 +109,9 @@ initialize_layers:
 	rts
 
 ;============================================================
-; set tiles
+; write_tiles
 ;============================================================
-set_tiles:
+write_tiles:
 	; write layer 1 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
@@ -119,6 +120,22 @@ set_tiles:
 	inx
 	cpx #24
 	bne -
+
+	; write layer 2 tile data
+	+vset $16000 | AUTO_INC_1
+	ldx #0
+-	lda tiles,x
+	sta veradat
+	inx
+	cpx #24
+	bne -
+
+	rts
+
+;============================================================
+; write_maps
+;============================================================
+write_maps:
 
 	; write layer 1 map data
 	+vset $04000 | AUTO_INC_1
@@ -135,14 +152,6 @@ set_tiles:
 	lda #$34
 	sta veradat
 
-	; write layer 2 tile data
-	+vset $16000 | AUTO_INC_1
-	ldx #0
--	lda tiles,x
-	sta veradat
-	inx
-	cpx #24
-	bne -
 
 	; write layer 2 map data
 	+vset $12000 | AUTO_INC_1
