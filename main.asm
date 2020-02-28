@@ -1,16 +1,20 @@
 *=$1000
+jmp start
 
 !src "vera.asm"
 !src "macros.asm"
 !src "x16.asm"
 !src "zp.asm"
+!src "game.asm"
 !src "tiles.inc"
 
 !addr def_irq = $0000
 
+start:
 	+video_init
 
 	jsr initialize_layers
+	jsr set_tiles
 	jsr init_irq
 	+LoadW zp_frame_counter,0
 
@@ -22,78 +26,6 @@ mainloop:
    jsr check_vsync
    jmp mainloop  ; loop forever
 
-;============================================================
-; game_tick
-;============================================================
-game_tick:
-
-	jsr check_inputs
-	jsr update_game_state
-	jsr draw_screen
-	jsr update_frame_counters
-
-	rts
-
-;============================================================
-; update_frame_counters
-; Keep frame counters up to date
-;============================================================
-update_frame_counters:
-	+IncW zp_frame_counter
-
-	; slower counters
-	+MoveW zp_frame_counter, zp_frame_counter_R2
-	+LsrW zp_frame_counter_R2
-	+MoveW zp_frame_counter_R2, zp_frame_counter_R4
-	+LsrW zp_frame_counter_R4
-
-	; faster counters
-	+MoveW zp_frame_counter, zp_frame_counter_L2
-	+AslW zp_frame_counter_L2
-	+MoveW zp_frame_counter_L2, zp_frame_counter_L4
-	+AslW zp_frame_counter_L4
-	rts
-
-;============================================================
-; check_inputs
-; Get inputs from user
-;============================================================
-check_inputs:
-	rts
-
-;============================================================
-; update_game_state
-; Updates the state of the game
-;============================================================
-update_game_state:
-	; hscroll layer 1
-	+vset (vreg_lay1 + 6) | AUTO_INC_1
-	lda zp_frame_counter_L4
-	sta veradat
-	lda zp_frame_counter_L4+1
-	sta veradat
-
-	; vscroll layer 1
-	+vset (vreg_lay1 + 8) | AUTO_INC_1
-	lda zp_frame_counter_L2
-	sta veradat
-	lda zp_frame_counter_L2+1
-	sta veradat
-
-	; hscroll layer 2
-	+vset (vreg_lay2 + 6) | AUTO_INC_1
-	lda zp_frame_counter
-	sta veradat
-	lda zp_frame_counter+1
-	sta veradat
-	rts
-
-;============================================================
-; draw_screen
-; Draws the screen
-;============================================================
-draw_screen:
-	rts
 
 ;============================================================
 ; init_irq
@@ -182,6 +114,12 @@ initialize_layers:
 	lda #$20
 	sta veradat
 
+	rts
+
+;============================================================
+; set tiles
+;============================================================
+set_tiles:
 	; write layer 2 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
