@@ -1,5 +1,8 @@
 HOME_ID = 0
 
+!src "screens/home/home_tiles.inc"
+!src "screens/home/home_map.inc"
+
 ;============================================================
 ; HOME_init
 ;============================================================
@@ -15,7 +18,7 @@ HOME_write_tiles:
 	; write layer 1 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
--	lda tiles,x
+-	lda home_tiles,x
 	sta veradat
 	inx
 	cpx #24
@@ -24,7 +27,7 @@ HOME_write_tiles:
 	; write layer 2 tile data
 	+vset $16000 | AUTO_INC_1
 	ldx #0
--	lda tiles,x
+-	lda home_tiles,x
 	sta veradat
 	inx
 	cpx #24
@@ -39,33 +42,54 @@ HOME_write_maps:
 
 	; write layer 1 map data
 	+vset $04000 | AUTO_INC_1
-	lda #0
-	sta veradat
-	lda #$34
-	sta veradat
-	lda #1
-	sta veradat
-	lda #$34
-	sta veradat
-	lda #2
-	sta veradat
-	lda #$34
-	sta veradat
 
+	ldx #0
+	ldy #0
+
+	+LoadW zp_map_pointer, home_layer_1
+
+-	lda (zp_map_pointer)
+	sta veradat
+	+IncW zp_map_pointer
+	lda (zp_map_pointer)
+	sta veradat
+	+IncW zp_map_pointer
+	inx
+	txa
+	cmp #$7f	; 128
+	bne -
+	ldx #0
+	iny
+	tya
+	cmp #$40	; 64
+	beq +
+	jmp -
+
++	nop
 
 	; write layer 2 map data
 	+vset $12000 | AUTO_INC_1
-	lda #0
-	sta veradat
-	lda #$34
-	sta veradat
-	lda #1
-	sta veradat
-	lda #$34
-	sta veradat
-	lda #2
-	sta veradat
-	lda #$34
-	sta veradat
 
-	rts
+	ldx #0
+	ldy #0
+
+	+LoadW zp_map_pointer, home_layer_2
+
+-	lda (zp_map_pointer)
+	sta veradat
+	+IncW zp_map_pointer
+	lda (zp_map_pointer)
+	sta veradat
+	+IncW zp_map_pointer
+	inx
+	txa
+	cmp #$7f	; 128
+	bne -
+	ldx #0
+	iny
+	tya
+	cmp #$40	; 64
+	beq +
+	jmp -
+
++	rts

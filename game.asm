@@ -1,5 +1,5 @@
-!src "screens/home.asm"
-!src "screens/street.asm"
+!src "screens/home/home.asm"
+!src "screens/street/street.asm"
 
 ;============================================================
 ; game_tick
@@ -78,19 +78,19 @@ check_inputs:
 ; Updates the state of the game
 ;============================================================
 update_game_state:
-	; hscroll layer 1
-	+vset (vreg_lay1 + 6) | AUTO_INC_1
-	lda zp_frame_counter_L4
-	sta veradat
-	lda zp_frame_counter_L4+1
-	sta veradat
+	; ; hscroll layer 1
+	; +vset (vreg_lay1 + 6) | AUTO_INC_1
+	; lda zp_frame_counter_L4
+	; sta veradat
+	; lda zp_frame_counter_L4+1
+	; sta veradat
 
-	; vscroll layer 1
-	+vset (vreg_lay1 + 8) | AUTO_INC_1
-	lda zp_frame_counter_L2
-	sta veradat
-	lda zp_frame_counter_L2+1
-	sta veradat
+	; ; vscroll layer 1
+	; +vset (vreg_lay1 + 8) | AUTO_INC_1
+	; lda zp_frame_counter_L2
+	; sta veradat
+	; lda zp_frame_counter_L2+1
+	; sta veradat
 
 	; hscroll layer 2
 	+vset (vreg_lay2 + 6) | AUTO_INC_1

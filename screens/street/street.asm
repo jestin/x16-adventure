@@ -1,5 +1,7 @@
 STREET_ID = 1
 
+!src "screens/street/street_tiles.inc"
+
 ;============================================================
 ; STREET_init
 ;============================================================
@@ -15,7 +17,7 @@ STREET_write_tiles:
 	; write layer 1 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
--	lda tiles,x
+-	lda street_tiles,x
 	sta veradat
 	inx
 	cpx #24
@@ -24,7 +26,7 @@ STREET_write_tiles:
 	; write layer 2 tile data
 	+vset $16000 | AUTO_INC_1
 	ldx #0
--	lda tiles,x
+-	lda street_tiles,x
 	sta veradat
 	inx
 	cpx #24

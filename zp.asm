@@ -16,3 +16,4 @@ ZERO_PAGE = 1
 
 !addr zp_current_screen			= $10
 !addr zp_next_screen			= $11
+!addr zp_map_pointer			= $12

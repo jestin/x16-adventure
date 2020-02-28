@@ -1,6 +1,5 @@
-*=$8000
 
-tiles:
+street_tiles:
 	!byte %11100111
 	!byte %11000011
 	!byte %10100101

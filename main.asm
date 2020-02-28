@@ -6,7 +6,6 @@ jmp start
 !src "x16.asm"
 !src "zp.asm"
 !src "game.asm"
-!src "tiles.inc"
 
 !addr def_irq = $0000
 
