@@ -74,33 +74,9 @@ check_vsync:
 ; initialize_layers
 ;============================================================
 initialize_layers:
-	; copy layer 1 registers to layer 0
+
+	; initialize layer 1
 	+vset vreg_lay1 | AUTO_INC_1
-	+vset2 vreg_lay2 | AUTO_INC_1
-
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-	lda veradat2
-	sta veradat
-
-	; initialize layer 2
-	+vset vreg_lay2 | AUTO_INC_1
 	lda #$01			; enable layer
 	sta veradat
 	lda #$06			; set MAPW/MAPH to 128x64
@@ -114,13 +90,28 @@ initialize_layers:
 	lda #$20
 	sta veradat
 
+	; initialize layer 2
+	+vset vreg_lay2 | AUTO_INC_1
+	lda #$01			; enable layer
+	sta veradat
+	lda #$06			; set MAPW/MAPH to 128x64
+	sta veradat			; and TILEW/TILEH to 8x8
+	lda #$00			; set layer 1 map base to $12000
+	sta veradat
+	lda #$48
+	sta veradat			; set layer 1 tile base to $16000
+	lda #$00
+	sta veradat
+	lda #$58
+	sta veradat
+
 	rts
 
 ;============================================================
 ; set tiles
 ;============================================================
 set_tiles:
-	; write layer 2 tile data
+	; write layer 1 tile data
 	+vset $08000 | AUTO_INC_1
 	ldx #0
 -	lda tiles,x
@@ -129,8 +120,32 @@ set_tiles:
 	cpx #24
 	bne -
 
+	; write layer 1 map data
+	+vset $04000 | AUTO_INC_1
+	lda #0
+	sta veradat
+	lda #$34
+	sta veradat
+	lda #1
+	sta veradat
+	lda #$34
+	sta veradat
+	lda #2
+	sta veradat
+	lda #$34
+	sta veradat
+
+	; write layer 2 tile data
+	+vset $16000 | AUTO_INC_1
+	ldx #0
+-	lda tiles,x
+	sta veradat
+	inx
+	cpx #24
+	bne -
+
 	; write layer 2 map data
-	+vset $04006 | AUTO_INC_1
+	+vset $12000 | AUTO_INC_1
 	lda #0
 	sta veradat
 	lda #$34
