@@ -88,7 +88,7 @@ load_tile_map_mode_0:
 ; well as called +vset with the correct vram address
 ; and increment
 ; Example:
-;	lda #24
+;	lda #(NUM_TILES << 3)
 ;	sta zp_tile_data_length
 ;	+LoadW zp_tile_base, home_tiles
 ;	+vset LAYER_1_TILES | AUTO_INC_1

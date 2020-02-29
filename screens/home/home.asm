@@ -28,7 +28,7 @@ HOME_initialize_layers:
 ; HOME_write_tiles
 ;============================================================
 HOME_write_tiles:
-	lda #24
+	lda #(3 << 3)					; num tiles multiplied by 8
 	sta zp_tile_data_length
 	+LoadW zp_tile_base, home_tiles
 	+vset LAYER_1_TILES | AUTO_INC_1
